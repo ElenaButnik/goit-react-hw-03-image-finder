@@ -5,6 +5,7 @@ import ImageAPI from "../services/pixabay";
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import s from "./ImageGallery.module.css";
+import PropTypes from "prop-types";
 
 export default class ImageGallery extends Component {
   state = {
@@ -21,7 +22,7 @@ export default class ImageGallery extends Component {
     const { page, perPage } = this.state;
     const { imageName } = this.props;
 
-      if (prevProps.imageName !== imageName) {
+    if (prevProps.imageName !== imageName) {
       this.setState({ imageArray: [], page: 1, status: "pending" });
     }
     if (prevProps.imageName !== imageName || prevState.page !== page) {
@@ -53,11 +54,9 @@ export default class ImageGallery extends Component {
   }
 
   handleClickBtn = () => {
-    
     this.setState(({ page }) => {
       return {
         page: page + 1,
-        //imageArray: this.state.imageArray,
         status: "pending",
       };
     });
@@ -81,40 +80,39 @@ export default class ImageGallery extends Component {
   render() {
     const { status, imageArray, showModal, largeImg } = this.state;
 
-    if (status === "idle") {
-      return <div className={s.Query}>Please enter your query!</div>;
-    }
-
-    if (status === "pending") {
-      return (
-        <Loader className={s.Loader}
-          type="Circles"
-          color="#d5e215"
-          height={100}
-          width={100}
-        />
-      );
-    }
-
-    if (status === "rejected") {
-      return <h1 className={s.Query}>Something was wrong please try again!</h1>;
-    }
-
-    if (status === "resolved") {
-      return (
-        <>
-          <ul className={s.ImageGallery}>
-            <ImageGalleryItem
-              imageArray={imageArray}
-              onImageClick={this.onImageClick}
-            />
-          </ul>
-          <Button handleClickBtn={this.handleClickBtn} />
-          {showModal && (
-            <Modal onClose={this.toggleModal} largeImg={largeImg}></Modal>
-          )}
-        </>
-      );
-    }
+    return (
+      <div>
+        {status === "idle" && (
+          <div className={s.Query}>Please enter your query!</div>
+        )}
+        {status === "pending" && (
+          <Loader
+            className={s.Loader}
+            type="Circles"
+            color="#d5e215"
+            height={100}
+            width={100}
+          />
+        )}
+        {status === "rejected" && (
+          <h1 className={s.Query}>Something was wrong please try again!</h1>
+        )}
+        <ul className={s.ImageGallery}>
+          <ImageGalleryItem
+            imageArray={imageArray}
+            onImageClick={this.onImageClick}
+          />
+        </ul>
+        <Button handleClickBtn={this.handleClickBtn} />
+        {showModal && (
+          <Modal onClose={this.toggleModal} largeImg={largeImg}></Modal>
+        )}
+      </div>
+    );
   }
 }
+
+ImageGallery.propTypes = {
+  imageName: PropTypes.string,
+  pageScroll: PropTypes.func,
+};
