@@ -78,7 +78,8 @@ export default class ImageGallery extends Component {
   };
 
   render() {
-    const { status, imageArray, showModal, largeImg } = this.state;
+    const { status, imageArray, showModal, largeImg, page } = this.state;
+    const activeBtn = imageArray.length > 0  && imageArray.length / page === 12;
 
     return (
       <div>
@@ -103,7 +104,7 @@ export default class ImageGallery extends Component {
             onImageClick={this.onImageClick}
           />
         </ul>
-        <Button handleClickBtn={this.handleClickBtn} />
+        {activeBtn && (<Button handleClickBtn={this.handleClickBtn} />)}
         {showModal && (
           <Modal onClose={this.toggleModal} largeImg={largeImg}></Modal>
         )}
