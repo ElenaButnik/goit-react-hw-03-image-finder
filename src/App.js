@@ -5,12 +5,15 @@ import ImageGallery from "./components/ImageGallery/ImageGallery";
 
 export default class App extends Component {
   state = {
-    imageName: "",
+    imageName: '',
+    
+    
   };
 
   handleFormSubmit = (imageName) => {
     this.setState({ imageName });
   };
+
 
   pageScroll() {
     window.scrollTo({
@@ -22,7 +25,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Searchbar onPropsSubmit={this.handleFormSubmit} />
+        <Searchbar handleFormSubmit={this.handleFormSubmit} />
         <ImageGallery
           imageName={this.state.imageName}
           pageScroll={this.pageScroll}

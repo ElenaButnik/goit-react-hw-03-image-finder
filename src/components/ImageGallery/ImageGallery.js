@@ -24,30 +24,32 @@ export default class ImageGallery extends Component {
 
     if (prevProps.imageName !== imageName) {
       this.setState({ imageArray: [], page: 1, status: "pending" });
-    }
-    if (prevProps.imageName !== imageName || prevState.page !== page) {
-      this.setState({ status: "pending" });
 
-      // eslint-disable-next-line
       ImageAPI.fetchImage(imageName, page, perPage)
-        .then(({ hits }) => {
-          const images = hits.map(
-            ({ id, webformatURL, largeImageURL, tags }) => {
-              return { id, webformatURL, largeImageURL, tags };
-            }
-          );
-          // console.log(images);
-          if (images.length > 0) {
-            this.setState((prevState) => {
-              return {
-                imageArray: [...prevState.imageArray, ...images],
-                status: "resolved",
-              };
+        .then((data) => {
+          if (data.hits.length > 0) {
+            this.setState({
+              imageArray: data.hits,
+              status: "resolved",
             });
             this.props.pageScroll();
           } else {
             this.setState({ status: "rejected" });
           }
+        })
+
+        .catch((error) => {
+          this.setState({ status: "rejected" });
+        });
+    } else if  (prevState.page !== page && page !== 1) {
+      this.setState({ status: "pending" });
+      ImageAPI.fetchImage(imageName, page, perPage)
+        .then((data) => {
+          this.setState((prev) => ({
+            imageArray: [...prev.imageArray, ...data.hits],
+            status: "resolved",
+          }));
+          this.props.pageScroll();
         })
         .catch((error) => this.setState({ status: "rejected" }));
     }
@@ -79,7 +81,7 @@ export default class ImageGallery extends Component {
 
   render() {
     const { status, imageArray, showModal, largeImg, page } = this.state;
-    const activeBtn = imageArray.length > 0  && imageArray.length / page === 12;
+    const activeBtn = imageArray.length > 0 && imageArray.length / page === 12;
 
     return (
       <div>
@@ -104,7 +106,7 @@ export default class ImageGallery extends Component {
             onImageClick={this.onImageClick}
           />
         </ul>
-        {activeBtn && (<Button handleClickBtn={this.handleClickBtn} />)}
+        {activeBtn && <Button handleClickBtn={this.handleClickBtn} />}
         {showModal && (
           <Modal onClose={this.toggleModal} largeImg={largeImg}></Modal>
         )}

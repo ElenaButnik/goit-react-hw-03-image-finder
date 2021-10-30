@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 export default class Searchbar extends Component {
   state = {
     imageName: "",
+   
   };
 
   handleNameChange = (event) => {
@@ -19,8 +20,8 @@ export default class Searchbar extends Component {
       alert("Пожалуйста введите ваш запрос");
       return;
     }
-    this.props.onPropsSubmit(this.state.imageName);
-    this.setState({ imageName: "" });
+    this.props.handleFormSubmit(this.state.imageName);
+    this.setState({ imageName: "", });
   };
 
   render() {
@@ -47,5 +48,5 @@ export default class Searchbar extends Component {
 }
 
 Searchbar.propTypes={
-  onPropsSubmit: PropTypes.func,
+  handleFormSubmit: PropTypes.func,
 }
